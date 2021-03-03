@@ -65,14 +65,93 @@
 # How is the job done?
 
 1. in python, a famous module going by the name [sounddevice](https://github.com/spatialaudio/python-sounddevice) which provides bindings with the [PortAudio](http://www.portaudio.com/) library(written in C++), which in turn relays data to the sound-card.
-2. audio programming is the way to go about it.
 
 
 
-# Audio programming
+## Sounddevice
 
-1. *coding* sound.
-2.  
+1. `query_devices()` is called
+
+   1. Devices may support input, output or both input and output.
+
+   2. arguments
+
+      1. device = `id`, `string `
+
+         ```python
+         print(ds(sd.query_devices(device=5), indent=2)) # device with id = 5 to be print
+         ```
+
+         kind = `'output'` or `'input'`, **default** device is returned.
+
+         ```python
+         print(ds(sd.query_devices(kind='output'), indent=2)) # default device for output
+         ```
+
+   3. output
+
+      1. either a dictionary(if argument values are specified) or a list of dictionaries, displaying information on all available input/output devices.
+      2. fields of the dictionary:
+         1. `name`  "HDA Intel HDMI: 0 (hw:0,3)",
+         2. `hostapi`  ID of the host API, [query_hostapis()]() for more.
+         3. `max_input_channels` / `max_output_channels`: 8,
+         4. `default_low_input_latency` / `default_low_output_latency` default latency values for **interactive performance**.
+         5. `default_high_input_latency` / `default_high_output_latency` : default latency values for **robust, non-interactive applications**, for instance playing sound files.
+         6. `default_samplerate`: default sampling frequency of the device
+      3. 
+
+   4. 
+
+2. `cffi` is used
+
+   1. `FFI` stands for foreign function interface - mechanism by which a program written in one programming language can call routines or make use of services written in another.
+      1. inter-language calls.
+      2. other names 
+         1. language bindings(used by Ada programming language)
+         2. JNI / JNA (java native interface/access), this works both ways, i.e. functions written in other languages can be called from inside JAVA code, and code in other languages can call functions written in JAVA.
+      3. wrapper libraries, glue codes, 
+      4. problems with FFI
+         1. complicated data structures in one language may not be possible to implement in the other.
+         2. cross-language inheritance due to the object-composition models(how an object is defined in language 1 vs language 2) being different themselves.
+      5. 
+   2. [cffi docs](https://cffi.readthedocs.io/en/latest/goals.html)
+   3. on non-Windows platforms, C libraries typically have a specified C API but not an ABI (e.g. they may document a “struct” as having at least these fields, but maybe more)
+      1. ABI  is something like `ctypes` module, i.e. application binary interface.
+   4. **no c++ support, only C**
+
+3. 
+
+
+
+## `CFFI`
+
+1. **system-installed shared library**
+   1. code pre-compiled to be used for all programs.
+   2. can be linked to any program at run-time, and underlying code can be used by any number of programs at the same time.
+   3. So, this way the size of programs(using shared library) and the memory  footprint can be kept low as a lot of code is kept common in form of a  shared library.
+   4. in windows, they go by the name dynamically linked libraries **`.dll`** , linux - shared objects, hence the extension **`.so`**
+   5. to observe what libraries a particular program depends on, use `ldd <program/absolute/path>`
+      for instance, we know that `ls` is a program, hence writing `ldd /bin/ls` would give us all `.so` files it is dependent on.
+   6. since these files are pre-compiled, their content is binary in nature, i.e. you won't be able to read them.
+2. 
+
+
+
+# Sound Drivers
+
+1. **Jack, Pulseaudio, and Alsa** are commonly used sound drivers.
+2. CHECK `patest_pink.c` in `test` folder w.r.t. `portaudio` source.
+
+
+
+
+
+# Auxiliary stuff
+
+1. `_` leading names(underscore leading names)
+   1. variable or method is intended for internal use(“Hey, this isn’t really meant to be a part of the public interface of this class. Best to leave it alone.”).
+   2. merely an agreed upon convention and does not impose any restrictions on accessing the value of that variable.
+2. 
 
 
 
@@ -94,7 +173,7 @@
 6. security concerns(when accessing sites you aren't supposed to)
    1. [WAV audio files are now being used to hide malicious code](https://www.zdnet.com/article/wav-audio-files-are-now-being-used-to-hide-malicious-code/)
    2. 
-7. 
+7. what is ABI?
 
 
 

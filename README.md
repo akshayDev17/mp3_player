@@ -1,3 +1,11 @@
+# Table of Contents
+
+1. [Sound drivers](#sounddrivers)
+2. [`pa_front.c`](#pa_front)
+3. [`patest_wire.c`](#patest_wire)
+
+
+
 ## Introduction to .wav
 
 1. full form WAVeform audio file format.
@@ -137,12 +145,52 @@
 
 
 
-# Sound Drivers
+# Sound Drivers<a name="sounddrivers"></a>
 
 1. **Jack, Pulseaudio, and Alsa** are commonly used sound drivers.
 2. CHECK `patest_pink.c` in `test` folder w.r.t. `portaudio` source.
+   1. or check `patest_wire.c`, as it directly passes input(sound signals?) to output(hardware?)
 
 
+
+
+
+## `pa_front.c` <a name="pa_front"></a>
+
+1. `Pa_GetDefaultInputDevice()`
+   1. no function arguments, return value = `PaDeviceIndex`, which is type-defined as an **`int`** in `portaudio.h` .
+   2. `hostApi` and `result`, 2 int variables are declared.
+   3. `PA_LOGAPI_ENTER( "Pa_GetDefaultInputDevice" )` , which basically is a function(defined in `portaudio/src/common/pa_debugprint.h`) that is supposed to take a function name(not as a string, but as a pointer to this entered function itself) and 
+      1. `int printf (const char* format, ...);`  is a typical example of a **variadic function** , i.e. a function that will have variable number of arguments, i.e. number of arguments is not fixed, unlike the traditional function.
+         1. the typical format of a variadic function is `<return-type> <func_name> (<arguments-expected>, ...)`, where the **`...`** is known as the ellipsis.
+         2. as for the `arguments-expected` field, these are the arguments that are expected to be provided whenever this particular function is called.
+            in the case of `printf`, a `char *` is passed always, `(printf("%d\n", age);` , and the arguments that follow are usually variables.
+         3. A variadic function is typically used when code needs to be flexible w.r.t. amount/data-type of parameters handled.
+         4. the macros used in this code section are:
+            1. `va_list` : a data-type used to instantiate a linked list, that contains values of all arguments in the order of provision, both fixed and variable.
+            2. `va_start` : a HEAD pointer to the fixed arguments.
+            3. `va_arg` : a HEAD pointer to the variable arguments.
+         5. `vfprintf` : syntax = `int vfprintf(FILE *stream, const char *format, va_list arg);` , and it clearly shows that this function writes all the variable argument values to a particular stream.
+            In this case, this stream is **`stderr`** .
+         6. `va_end` is called in order to return from the `va_start` call, else the result is undefined, followed by flushing the buffers of `stderr` output stream.
+      2. the function `PA_LOGAPI_ENTER` calls `PaUtil_DebugPrint` which is declared in the same way as this `printf` function .
+      3. 
+   4. 
+2. 
+
+
+
+## `patest_wire.c`<a name="patest_wire"></a>
+
+1. `WireConfig_s` or `WireConfig_t` 
+2. `USE_FLOAT_INPUT` / `USE_FLOAT_OUTPUT` 
+   1. if  `USE_FLOAT_INPUT` is to be used, then `INPUT_FORMAT` is defined as `paFloat32`, which is actually an **unsigned long integer** initialized to hexadecimal 1.
+      1. `INPUT_SAMPLE` is type-defined to be a float.
+   2. if  `USE_FLOAT_INPUT` is **not** used, `INPUT_FORMAT` is defined as `paInt16`, an **unsigned long integer** initialized to hexadecimal 8, and  `INPUT_SAMPLE` is type-defined to be a short integer(16-bit).
+   3. the exact same `if` conditions are repeated for `USE_FLOAT_OUTPUT`
+3. a variable called `gInOutScaler` of datatype `double` is initialised to 1.
+4. `INPUT_DEVICE` and `OUTPUT_DEVICE` are defined as outputs of the functions `Pa_GetDefaultInputDevice()` and `Pa_GetDefaultOutputDevice()`.
+5. 
 
 
 
@@ -151,7 +199,8 @@
 1. `_` leading names(underscore leading names)
    1. variable or method is intended for internal use(“Hey, this isn’t really meant to be a part of the public interface of this class. Best to leave it alone.”).
    2. merely an agreed upon convention and does not impose any restrictions on accessing the value of that variable.
-2. 
+2. `typedef` in C means - create a new name that will point to a pre-existing datatype.
+3. 
 
 
 
